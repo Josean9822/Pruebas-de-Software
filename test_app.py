@@ -38,33 +38,34 @@ def test_cp07_estructura_salida():
     assert "message" in resultado
     assert "response_time_ms" in resultado
 
-# ================== 5 PRUEBAS EXPLORATORIAS (exactamente como pediste) ==================
+#5 Pruebas Exploratorias 
 def test_exploratorio_espacios_en_blanco():
-    # Espacios en blanco al inicio y final
+    
+    #Espacios en blanco al inicio y final
     resultado = autenticar_usuario(" admin ", "1234")
     assert resultado["success"] == False
     assert resultado["message"] == "Usuario no existe"
 
 def test_exploratorio_mayusculas_minusculas():
-    # Mayúsculas y minúsculas (el sistema es sensible a mayúsculas)
+    #Mayúsculas y minúsculas
     resultado = autenticar_usuario("ADMIN", "1234")
     assert resultado["success"] == False
     assert resultado["message"] == "Usuario no existe"
 
 def test_exploratorio_caracteres_especiales():
-    # Caracteres especiales en el username
+    #Caracteres especiales en el username
     resultado = autenticar_usuario("admin@#", "1234")
     assert resultado["success"] == False
     assert resultado["message"] == "Usuario no existe"
 
 def test_exploratorio_ambos_campos_vacios():
-    # Ambos campos completamente vacíos
+    #Ambos campos completamente vacíos
     resultado = autenticar_usuario("", "")
     assert resultado["success"] == False
     assert resultado["message"] == "Usuario y contraseña son requeridos"
 
 def test_exploratorio_password_con_espacios():
-    # Contraseña con espacios en blanco (nuevo caso exploratorio)
+    #Contraseña con espacios en blanco
     resultado = autenticar_usuario("admin", " 1234 ")
     assert resultado["success"] == False
     assert resultado["message"] == "Contraseña incorrecta"
