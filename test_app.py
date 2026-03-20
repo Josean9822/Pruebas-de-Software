@@ -1,43 +1,83 @@
 from app import autenticar_usuario
+import time
 
-# CP-01
-def test_login_exitoso():
+#Pruebas Funcionales (CP-01 a CP-07)
+def test_cp01_login_exitoso():
     resultado = autenticar_usuario("admin", "1234")
     assert resultado["success"] == True
     assert resultado["message"] == "Acceso concedido"
+    assert resultado["response_time_ms"] > 0
 
-# CP-02
-def test_usuario_vacio():
+def test_cp02_usuario_vacio():
     resultado = autenticar_usuario("", "1234")
     assert resultado["success"] == False
     assert resultado["message"] == "Usuario y contraseña son requeridos"
 
-# CP-03
-def test_password_vacio():
+def test_cp03_contrasena_vacia():
     resultado = autenticar_usuario("admin", "")
     assert resultado["success"] == False
     assert resultado["message"] == "Usuario y contraseña son requeridos"
 
-# CP-04
-def test_usuario_inexistente():
+def test_cp04_usuario_inexistente():
     resultado = autenticar_usuario("pedro", "1234")
     assert resultado["success"] == False
     assert resultado["message"] == "Usuario no existe"
 
-# CP-05
-def test_password_incorrecto():
+def test_cp05_contrasena_incorrecta():
     resultado = autenticar_usuario("admin", "9999")
     assert resultado["success"] == False
     assert resultado["message"] == "Contraseña incorrecta"
 
-# CP-06
-def test_tiempo_respuesta():
+def test_cp06_tiempo_respuesta_valido():
     resultado = autenticar_usuario("admin", "1234")
     assert resultado["response_time_ms"] > 0
 
-# CP-07
-def test_estructura_salida():
+def test_cp07_estructura_salida():
     resultado = autenticar_usuario("admin", "1234")
     assert "success" in resultado
     assert "message" in resultado
     assert "response_time_ms" in resultado
+
+# ================== 5 PRUEBAS EXPLORATORIAS (exactamente como pediste) ==================
+def test_exploratorio_espacios_en_blanco():
+    # Espacios en blanco al inicio y final
+    resultado = autenticar_usuario(" admin ", "1234")
+    assert resultado["success"] == False
+    assert resultado["message"] == "Usuario no existe"
+
+def test_exploratorio_mayusculas_minusculas():
+    # Mayúsculas y minúsculas (el sistema es sensible a mayúsculas)
+    resultado = autenticar_usuario("ADMIN", "1234")
+    assert resultado["success"] == False
+    assert resultado["message"] == "Usuario no existe"
+
+def test_exploratorio_caracteres_especiales():
+    # Caracteres especiales en el username
+    resultado = autenticar_usuario("admin@#", "1234")
+    assert resultado["success"] == False
+    assert resultado["message"] == "Usuario no existe"
+
+def test_exploratorio_ambos_campos_vacios():
+    # Ambos campos completamente vacíos
+    resultado = autenticar_usuario("", "")
+    assert resultado["success"] == False
+    assert resultado["message"] == "Usuario y contraseña son requeridos"
+
+def test_exploratorio_password_con_espacios():
+    # Contraseña con espacios en blanco (nuevo caso exploratorio)
+    resultado = autenticar_usuario("admin", " 1234 ")
+    assert resultado["success"] == False
+    assert resultado["message"] == "Contraseña incorrecta"
+
+#Pruebas De Tiempo
+def test_tiempo_respuesta_razonable():
+    inicio = time.perf_counter()
+    resultado = autenticar_usuario("admin", "1234")
+    fin = time.perf_counter()
+    tiempo_ms = (fin - inicio) * 1000
+    assert resultado["success"] == True
+    assert tiempo_ms < 500
+
+def test_tiempo_reportado_por_sistema():
+    resultado = autenticar_usuario("admin", "1234")
+    assert resultado["response_time_ms"] < 500
